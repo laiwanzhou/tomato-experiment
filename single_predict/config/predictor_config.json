@@ -1,0 +1,7 @@
+{
+  "model": "fcn_resnet50",
+  "image_size": 512,
+  "rho": 1.0468,
+  "volume_formula": "V3_ellipsoid_H_eq_W",
+  "density_method": "mean"
+}

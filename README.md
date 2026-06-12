@@ -392,6 +392,65 @@ outputs\seg_roi_predictions\roi_segmentation_preview.jpg
 ```
 
 当前阶段只做 ROI 语义分割预测和可视化，暂不接入体积估算或重量预测。
+
+## 使用语义分割 mask 进行体积估重
+
+当语义分割模型训练完成，并且已经对 33 张固定 ROI 图像完成预测后，可以使用预测 mask 替代 HSV 阈值分割来重新计算面积、长轴、短轴、体积、密度和验证集重量误差。
+
+推荐流程：
+
+```powershell
+conda activate PyTorch2.7
+cd D:\work\2026.6.11番茄
+
+# 1. 训练分割模型，得到 best_model.pth
+python .\scripts\06_train_segmentation_baseline.py --model fcn_resnet50 --epochs 60 --batch-size 4 --image-size 512 --amp --cudnn-benchmark --cache-ram
+
+# 2. 预测 33 张 ROI，得到 idx_XXX_pred_mask.png
+python .\scripts\07_predict_roi_with_seg_model.py
+
+# 3. 使用 seg mask 进行体积估重，并与 HSV-red baseline 对比
+python .\scripts\08_run_volume_experiment_with_seg_mask.py
+```
+
+输入文件：
+
+```text
+outputs\roi_tomato_images
+outputs\seg_roi_predictions\idx_XXX_pred_mask.png
+outputs\weights.csv
+outputs\scale_config.json
+outputs\summary_red.xlsx
+```
+
+注意：
+
+- `idx_XXX_pred_mask.png` 是 `0/1` 标签图，不是 `0/255` 可视化图；普通图片查看器看起来接近纯黑是正常的。
+- 脚本计算时会使用 `mask > 0` 得到二值 mask；debug 图中会显示为 `mask * 255`。
+- 体积估重时只保留预测 mask 的最大连通域作为目标番茄，避免零散噪声影响面积和轴长。
+- HSV-red baseline 不会被覆盖；Seg-mask 与 HSV-red 的最佳方法对比写入 `summary_seg.xlsx`。
+
+主要输出：
+
+```text
+outputs\summary_seg.xlsx
+outputs\debug_masks_contact_sheet_seg.jpg
+outputs\debug_masks_seg\idx_XXX_seg_debug.jpg
+outputs\volume_results_seg\volume_features_seg.csv
+outputs\volume_results_seg\predictions_seg.csv
+outputs\volume_results_seg\experiment_results_seg.csv
+outputs\volume_results_seg\cv_results_seg.csv
+outputs\volume_results_seg\seg_vs_red_comparison.csv
+outputs\volume_results_seg\warnings_seg.csv
+```
+
+请优先检查：
+
+```text
+outputs\debug_masks_contact_sheet_seg.jpg
+outputs\summary_seg.xlsx
+outputs\volume_results_seg\seg_vs_red_comparison.csv
+```
 ## GitHub 版本管理说明
 
 本仓库只保存代码和说明文档，用于代码审计、版本回退和记录开发过程。

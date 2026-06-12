@@ -3,6 +3,8 @@ tomato/
 番茄数据/
 outputs/
 outputs_archive_cleanup_*/
+single_predict/outputs/
+density_calibration/outputs/
 阶段情况/
 *.zip
 
