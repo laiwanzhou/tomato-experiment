@@ -1,0 +1,51 @@
+# Data and generated outputs
+tomato/
+番茄数据/
+outputs/
+outputs_archive_cleanup_*/
+阶段情况/
+*.zip
+
+# Python cache
+**/__pycache__/
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE / system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Training / model artifacts
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.weights
+
+# Images and generated previews
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+*.JPG
+*.JPEG
+*.PNG
+*.BMP
+*.TIF
+*.TIFF
+
+# Tables and generated result files
+*.xlsx
+*.xls
+
+# Optional local env files
+.env
+.venv/
+venv/
+env/
